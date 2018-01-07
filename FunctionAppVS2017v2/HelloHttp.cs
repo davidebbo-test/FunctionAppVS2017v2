@@ -9,10 +9,12 @@ using Newtonsoft.Json;
 
 namespace FunctionAppVS2017v2
 {
-    public static class Function1
+    public static class HelloHttp
     {
-        [FunctionName("Function1")]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]HttpRequest req, TraceWriter log)
+        [FunctionName("HelloHttp")]
+        public static IActionResult Run(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]HttpRequest req,
+            TraceWriter log)
         {
             log.Info("C# HTTP trigger function processed a request.");
 
