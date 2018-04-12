@@ -17,6 +17,7 @@ namespace FunctionAppVS2017v2
             TraceWriter log)
         {
             log.Info("C# HTTP trigger function processed a request.");
+            log.Info($"From class library: {MyClassLibrary.Hello.SayHello("David")}");
 
             string name = req.Query["name"];
 
