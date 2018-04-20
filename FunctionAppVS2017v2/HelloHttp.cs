@@ -6,17 +6,23 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs.Host;
 using Newtonsoft.Json;
+using System;
 
 namespace FunctionAppVS2017v2
 {
     public static class HelloHttp
     {
+        static int _counter;
+
         [FunctionName("HelloHttp")]
         public static IActionResult Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]HttpRequest req,
             TraceWriter log)
         {
-            log.Info("C# HTTP trigger function processed a request.");
+            // Static counter to see when new runtime starts
+            _counter++;
+
+            log.Info($"C# HTTP trigger function processed a request, Counter={_counter}, Machine={Environment.MachineName}");
             log.Info($"From class library: {MyClassLibrary.Hello.SayHello("David")}");
 
             string name = req.Query["name"];
@@ -26,7 +32,13 @@ namespace FunctionAppVS2017v2
             name = name ?? data?.name;
 
             return name != null
-                ? (ActionResult)new OkObjectResult($"Hello, {name}")
+                ? (ActionResult)new OkObjectResult(new
+                {
+                    Name = $"Hello, {name}",
+                    Time = DateTime.UtcNow,
+                    Counter = _counter,
+                    Host = Environment.MachineName
+                })
                 : new BadRequestObjectResult("Please pass a name on the query string or in the request body");
         }
     }
