@@ -37,7 +37,8 @@ namespace FunctionAppVS2017v2
                     Name = $"Hello, {name}",
                     Time = DateTime.UtcNow,
                     Counter = _counter,
-                    Host = Environment.MachineName
+                    Host = Environment.MachineName,
+                    Foo = Environment.GetEnvironmentVariable("FOO")
                 })
                 : new BadRequestObjectResult("Please pass a name on the query string or in the request body");
         }
