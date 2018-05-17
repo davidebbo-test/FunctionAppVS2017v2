@@ -16,7 +16,7 @@ namespace FunctionAppVS2017v2
         {
             ++_counter;
             log.Info($"C# Timer trigger function executed at: {DateTime.Now}, Counter={_counter}, Machine={Environment.MachineName}");
-            myQueueItemCopy = $"{DateTime.Now}, Counter={_counter}, Machine={Environment.MachineName}";
+            myQueueItemCopy = $"{DateTime.Now}, Counter={_counter}, Site={Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME")} Machine={Environment.MachineName}";
         }
     }
 }
