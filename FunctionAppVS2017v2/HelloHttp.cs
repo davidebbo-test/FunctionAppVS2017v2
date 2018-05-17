@@ -39,7 +39,8 @@ namespace FunctionAppVS2017v2
                     Counter = _counter,
                     Environment.MachineName,
                     req.Host.Host,
-                    Foo = Environment.GetEnvironmentVariable("FOO")
+                    Foo = Environment.GetEnvironmentVariable("FOO"),
+                    Env = Environment.GetEnvironmentVariables()
                 })
                 : new BadRequestObjectResult("Please pass a name on the query string or in the request body");
         }
