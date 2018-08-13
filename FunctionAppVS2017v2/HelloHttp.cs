@@ -31,18 +31,39 @@ namespace FunctionAppVS2017v2
             dynamic data = JsonConvert.DeserializeObject(requestBody);
             name = name ?? data?.name;
 
-            return name != null
-                ? (ActionResult)new OkObjectResult(new
+            if (name == null)
+            {
+                return new BadRequestObjectResult("Please pass a name on the query string or in the request body");
+            }
+
+            // If we're asked to verify that this is a cold start, fail with 500 if it's not
+            string verifyColdStart = req.Query["verify_cold_start"];
+            if (verifyColdStart != null && _counter > 1)
+            {
+                return new ObjectResult("Not a cold start request!") { StatusCode = 500 };
+            }
+
+            // Verify an env variable if asked to
+            string verifyEnvVariable = req.Query["check_env_var"];
+            if (verifyEnvVariable != null)
+            {
+                var keyAndValue = verifyEnvVariable.Split(',');
+                if (Environment.GetEnvironmentVariable(keyAndValue[0]) != keyAndValue[1])
                 {
-                    Name = $"Hello, {name}",
-                    Time = DateTime.UtcNow,
-                    Counter = _counter,
-                    Environment.MachineName,
-                    req.Host.Host,
-                    Foo = Environment.GetEnvironmentVariable("FOO"),
-                    Env = Environment.GetEnvironmentVariables()
-                })
-                : new BadRequestObjectResult("Please pass a name on the query string or in the request body");
+                    return new ObjectResult($"Environment variable '{keyAndValue[0]}' is not set to '{keyAndValue[1]}'") { StatusCode = 500 };
+                }
+            }
+
+            return new OkObjectResult(new
+            {
+                Name = $"Hello, {name}",
+                Time = DateTime.UtcNow,
+                Counter = _counter,
+                Environment.MachineName,
+                req.Host.Host,
+                Foo = Environment.GetEnvironmentVariable("FOO"),
+                Env = Environment.GetEnvironmentVariables()
+            });
         }
     }
 }
